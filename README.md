@@ -20,8 +20,7 @@ Below example assumes the pipeview (pv) utility has been installed
 
 ```
 $ ./randocat.py -d | pv > /dev/null
-INFO:root:Loaded 2 entropy modules [ProcEntropyGatherer,
-SockstatEntropyGatherer]
+INFO:root:Loaded 2 entropy modules [ProcEntropyGatherer, SockstatEntropyGatherer]
 48KiB 0:00:09 [4.01KiB/s] [                                <=> ]
 ```
 
