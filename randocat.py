@@ -6,9 +6,8 @@
 import argparse
 import logging
 import os
-import Queue
 import sys
-import threading
+import multiprocessing
 
 import gather_funcs
 
@@ -21,20 +20,22 @@ else:
 logger = logging.basicConfig(level = log_level)
 
 def main(args):
-    # Get a list of entropy gatherers
-    gather_modules = filter(lambda x: callable(x), gather_funcs.__dict__.values())
-    logging.info("Loaded %s entropy modules [%s]" % (len(gather_modules), ', '.join([
-        f.__name__ for f in gather_modules])))
-
     # Create a queue where we will receive our random data
-    q = Queue.Queue()
+    q = multiprocessing.Queue()
 
-    # Start a thread per entropy gatherer
+    # Get a list of entropy gatherers
+    gather_modules = []
+    for m in filter(lambda x: callable(x), gather_funcs.__dict__.values()):
+        gather_modules.append(m(q))
+
+    logging.info("Loaded %s entropy modules [%s]" % (len(gather_modules), ', '.join([
+        m.name for m in gather_modules])))
+
+    # Start a process per entropy gatherer
     for m in gather_modules:
-        func = m(q)
-        t = threading.Thread(target=func.get_bytes)
-        t.daemon = True
-        t.start()
+        p = multiprocessing.Process(target=m.get_bytes)
+        p.daemon = True
+        p.start()
 
     while True:
         try:
