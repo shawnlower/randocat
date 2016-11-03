@@ -2,6 +2,7 @@
 class EntropyGatherer:
     def __init__(self, queue):
         self.queue = queue
+        self.name = self.__class__.__name__
 
     def get_bytes(self, k):
         """
