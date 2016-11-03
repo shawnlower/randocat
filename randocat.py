@@ -41,6 +41,7 @@ def main(args):
         try:
             sys.stdout.write(q.get())
         except KeyboardInterrupt:
+            # NOTE: This will not be caught if it occurs within a subprocess
             break
 
 if __name__ == '__main__':
